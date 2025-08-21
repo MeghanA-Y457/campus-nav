@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Campus Indoor Navigation</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      background: #f9f9f9;
+    }
+    h1 { 
+      color: #2c3e50; 
+    }
+    #map { 
+      margin-top: 20px; 
+      padding: 15px; 
+      background: #fff; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    }
+    .location-box {
+      padding: 10px;
+      margin: 5px 0;
+      background: #eaf2f8;
+      border-left: 4px solid #2980b9;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: none;
+      background: #2980b9;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #21618c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Campus Indoor Navigation</h1>
+  <p id="current-location"></p>
+
+  <label for="destination">Choose your destination:</label>
+  <select id="destination">
+    <option value="library">Library</option>
+    <option value="cseLab">CSE Lab</option>
+    <option value="canteen">Canteen</option>
+    <option value="admin">Admin Block</option>
+  </select>
+
+  <button onclick="navigate()">Navigate</button>
+
+  <div id="map"></div>
+
+  <script>
+    // Define indoor locations with coordinates (in meters)
+    const locations = {
+      admin: {x: 0, y: 0, name: "Admin Block"},
+      library: {x: 5, y: 2, name: "Library"},
+      cseLab: {x: 8, y: 2, name: "CSE Lab"},
+      canteen: {x: 10, y: -3, name: "Canteen"}
+    };
+
+    // Read ?from=... in the URL
+    const params = new URLSearchParams(window.location.search);
+    const currentKey = params.get("from") || "admin"; // default admin
+    const current = locations[currentKey];
+
+    document.getElementById("current-location").innerText =
+      "📍 You are at: " + (current ? current.name : "Unknown");
+
+    // Function to calculate navigation
+    function navigate() {
+      const destKey = document.getElementById("destination").value;
+      const dest = locations[destKey];
+
+      if (!current || !dest) {
+        alert("Invalid location selected!");
+        return;
+      }
+
+      // Distance formula √((x2-x1)^2 + (y2-y1)^2)
+      const dx = dest.x - current.x;
+      const dy = dest.y - current.y;
+      const distance = Math.sqrt(dx*dx + dy*dy).toFixed(2);
+
+      document.getElementById("map").innerHTML = `
+        <div class="location-box">
+          🚶 From: ${current.name}<br>
+          🎯 To: ${dest.name}<br>
+          📏 Distance: ${distance} meters
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
